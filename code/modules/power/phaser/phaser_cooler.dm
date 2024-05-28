@@ -1,17 +1,15 @@
-/obj/machinery/power/reactor_cooler //temporary
+/obj/machinery/power/reactor_cooler
 	name = "reactor cooler"
 	icon = 'icons/obj/machines/particle_accelerator.dmi'
 	icon_state = "power_box"
 	density = TRUE
 	dir = EAST
 	var/accelerator
-	var/cooling_power
-
-/obj/machinery/power/reactor_cooler/proc/cool(total_heat)
-	if(total_heat)
-		return (max(total_heat - cooling_power, 0))
-	else
-		return(0)
+	var/stored_heat = 0
+	var/heat_capacity = 300
+	var/system_heat = 0
 
 /obj/machinery/power/reactor_cooler/proc/meltdown()
 	Destroy(src)
+
+/obj/machinery/power/reactor_cooler/proc/cool()
