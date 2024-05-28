@@ -7,24 +7,23 @@
 #define EXTREME_MELTDOWN 5000
 #define MEDIUM_MELTDOWN 2500
 
-/obj/machinery/power/reactor_accelerator
+/obj/machinery/power/phaser/phaser_accelerator
 	name = "particle blasta"
 	desc = "particle yeeaAAAAH!!"
 	icon = 'icons/obj/machines/particle_accelerator.dmi'
 	icon_state = "end_cap"
-	density = TRUE
 	use_power = IDLE_POWER_USE
 	dir = EAST
 	var/checking_parts
-	var/list/reactors = list()
+	var/list/phasers = list()
 	var/datum/weakref/cooler
 	var/on = FALSE
-	var/list/all_rods = list()
-	var/total_rods = 0
+	var/list/all_cells = list()
+	var/total_cells = 0
 	var/total_dampen = 0
 	var/total_system_heat = 0
 	var/frequency = 0 // used to determine activity and power consumption
-	var/exposure = 0 //0 to 100, used to determine rod depletion and activity
+	var/exposure = 0 //0 to 100, used to determine cell depletion and activity
 	var/total_power_output = 0
 	var/total_activity = 0
 	var/capacitor = 0
@@ -32,52 +31,51 @@
 
 //decon stuff
 
-/obj/machinery/power/reactor_accelerator/Destroy()
+/obj/machinery/power/phaser/phaser_accelerator/Destroy()
 	kill_parts()
 	return ..()
 
-/obj/machinery/power/reactor_accelerator/on_deconstruction()
+/obj/machinery/power/phaser/phaser_accelerator/on_deconstruction()
 	kill_parts()
 	return ..()
 
 //parts procs
 
-/obj/machinery/power/reactor_accelerator/proc/find_parts() //iterates over each turf in the direction it's facing, continuing only if it finds a chamber, and ending otherwise.
+/obj/machinery/power/phaser/phaser_accelerator/proc/find_parts() //iterates over each turf in the direction it's facing, continuing only if it finds a chamber, and ending otherwise.
 	kill_parts()
 	var/turf/turf = loc
 	checking_parts = TRUE
 	while(checking_parts)
 		turf = get_step(turf, dir)
 		check_for_part(turf)
-	if(reactors && cooler)
+	if(phasers && cooler)
 		return TRUE
 	return FALSE
 
-/obj/machinery/power/reactor_accelerator/proc/kill_parts() //removes connected chambers and cooler
-	reactors.Cut()
+/obj/machinery/power/phaser/phaser_accelerator/proc/kill_parts() //removes connected chambers and cooler
+	phasers.Cut()
 	cooler = null
 
-/obj/machinery/power/reactor_accelerator/proc/check_for_part(turf) //checks for chambers and coolers on turfs sent by find_parts()
-	var/chamberpath = /obj/machinery/power/reactor_chamber
-	var/coolerpath = /obj/machinery/power/reactor_cooler
-	for(var/obj/machinery/potential in turf)
+/obj/machinery/power/phaser/phaser_accelerator/proc/check_for_part(turf) //checks for chambers and coolers on turfs sent by find_parts()
+	var/chamberpath = /obj/machinery/power/phaser/phaser_chamber
+	var/coolerpath = /obj/machinery/power/phaser/phaser_cooler
+	for(var/obj/machinery/power/phaser/potential in turf)
 		if(potential.dir == dir && potential.anchored && !(potential.machine_stat &(BROKEN)))
 			if(istype(potential, chamberpath))
-				var/obj/machinery/power/reactor_chamber/chamber = potential
-				reactors += chamber
+				var/obj/machinery/power/phaser/phaser_chamber/chamber = potential
+				phasers += chamber
 				chamber.accelerator = src
 				chamber = null
 				return
 			if(istype(potential, coolerpath))
-				var/obj/machinery/power/reactor_cooler/potential_cooler = potential
+				var/obj/machinery/power/phaser/phaser_cooler/potential_cooler = potential
 				potential_cooler.accelerator = src
 				cooler = WEAKREF(potential_cooler)
 				return
-			checking_parts = FALSE
-
+	checking_parts = FALSE
 //tool stuff
 
-/obj/machinery/power/reactor_accelerator/attackby(obj/item/I, mob/user, params)
+/obj/machinery/power/phaser/phaser_accelerator/attackby(obj/item/I, mob/user, params)
 	if(I.tool_behaviour == TOOL_MULTITOOL)
 		if(find_parts())
 			playsound(src, 'sound/misc/box_deploy.ogg', 50)
@@ -90,12 +88,12 @@
 	else
 		return .. ()
 
-/obj/machinery/power/reactor_accelerator/AltClick(mob/user)
+/obj/machinery/power/phaser/phaser_accelerator/AltClick(mob/user)
 	frequency = clamp(input(user, "Choose A Frequency!", "Frequency") as num, 0, 9000)
 	exposure = clamp(input(user, "Choose A Rate!", "Rate") as num, 0, 100)
 	to_chat(user, "<span class='notice'>[src] is set to [frequency]GHz at [exposure]%.</span>")
 
-/obj/machinery/power/reactor_accelerator/examine()
+/obj/machinery/power/phaser/phaser_accelerator/examine()
 	. = ..()
 	. += "[src] is [on ? "running!" : "offline."]"
 	if(on)
@@ -103,7 +101,7 @@
 /*
 
 
-REACTOR PROCESS SECTION
+phaser PROCESS SECTION
 
 Y   Y  EEEEE  SSSSS         GGGGG  EEEEE  CCCCC  !!
 Y   Y  E      S             G      E      C      !!
@@ -114,7 +112,7 @@ Y   Y  E      S             G      E      C      !!
 */
 
 
-/obj/machinery/power/reactor_accelerator/process()
+/obj/machinery/power/phaser/phaser_accelerator/process()
 	//find parts
 	if(!find_parts())
 		return
@@ -130,12 +128,12 @@ Y   Y  E      S             G      E      C      !!
 	else
 		add_load(power_use)
 
-	//make the rods work
-	all_rods.Cut()
-	for (var/obj/machinery/power/reactor_chamber/chamber in reactors)
-		all_rods.Add(chamber.contents)
-	total_rods = all_rods.len
-	if(!total_rods)
+	//make the cells work
+	all_cells.Cut()
+	for (var/obj/machinery/power/phaser/phaser_chamber/chamber in phasers)
+		all_cells.Add(chamber.contents)
+	total_cells = all_cells.len
+	if(!total_cells)
 		return
 	total_dampen = 0
 	total_system_heat = 0 //measured in Joules of heat. I think
@@ -143,19 +141,19 @@ Y   Y  E      S             G      E      C      !!
 	total_activity = 0
 	var/total_heat_capacity = 0
 
-	for (var/obj/item/reactor_rod/control/control_rod in all_rods)
-		total_dampen += control_rod.dampen
-	for (var/obj/item/reactor_rod/rod in all_rods)
+	for (var/obj/item/phaser_cell/control/control_cell in all_cells)
+		total_dampen += control_cell.dampen
+	for (var/obj/item/phaser_cell/cell in all_cells)
 		if(!on)
-			rod.resonate(0, total_dampen)
+			cell.resonate(0, total_dampen)
 		else
-			rod.resonate(frequency, total_dampen)
-		if(!rod)
+			cell.resonate(frequency, total_dampen)
+		if(!cell)
 			continue
-		total_power_output += rod.power_output
-		total_system_heat += rod.rod_heat
-		total_heat_capacity += rod.heat_capacity
-		total_activity += rod.activity
+		total_power_output += cell.power_output
+		total_system_heat += cell.cell_heat
+		total_heat_capacity += cell.heat_capacity
+		total_activity += cell.activity
 	//cooler time
 //	total_heat_capacity += cooler.heat_capacity
 //	total_system_heat += cooler.stored_heat
@@ -163,14 +161,14 @@ Y   Y  E      S             G      E      C      !!
 	//failure states
 	if(total_system_heat > LOW_HEAT_THRESHOLD)
 		if(total_system_heat > CRITICAL_HEAT_THRESHOLD)
-			meltdown(total_activity, all_rods)
+			meltdown(total_activity, all_cells)
 
 	//make power
-	for (var/obj/machinery/power/reactor_chamber/chamber in reactors)
-		chamber.add_avail(round(total_power_output / reactors.len,1))
+	for (var/obj/machinery/power/phaser/phaser_chamber/chamber in phasers)
+		chamber.add_avail(round(total_power_output / phasers.len,1))
 
 
-/obj/machinery/power/reactor_accelerator/proc/meltdown(activity, var/list/all_rods = list())
+/obj/machinery/power/phaser/phaser_accelerator/proc/meltdown(activity, var/list/all_cells = list())
 	if(!find_parts())
 		explosion(src,4,4,3,3, smoke = TRUE)
 		return
@@ -184,9 +182,9 @@ Y   Y  E      S             G      E      C      !!
 		cleanup()
 		return
 
-/obj/machinery/power/reactor_accelerator/proc/cleanup(var/list/reactors = list(), var/obj/machinery/power/reactor_cooler/cooler)
+/obj/machinery/power/phaser/phaser_accelerator/proc/cleanup(var/list/phasers = list(), var/obj/machinery/power/phaser/phaser_cooler/cooler)
 	//cooler.meltdown()
-	for(var/obj/machinery/power/reactor_chamber/chamber in reactors)
+	for(var/obj/machinery/power/phaser/phaser_chamber/chamber in phasers)
 		chamber.meltdown()
 	kill_parts()
 	Destroy(src)
