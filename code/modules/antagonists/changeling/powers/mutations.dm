@@ -140,7 +140,7 @@
 	helptext = "We may retract our armblade in the same manner as we form it. Cannot be used while in lesser form."
 	button_icon_state = "armblade"
 	chemical_cost = 20
-	dna_cost = 2
+	dna_cost = 3
 	req_human = 1
 	weapon_type = /obj/item/melee/arm_blade
 	weapon_name_simple = "blade"
@@ -274,7 +274,7 @@
 	helptext = "We must constantly repair our form to make it space-proof, reducing chemical production while we are protected. Cannot be used in lesser form."
 	button_icon_state = "organic_suit"
 	chemical_cost = 20
-	dna_cost = 2
+	dna_cost = 1
 	req_human = 1
 
 	suit_type = /obj/item/clothing/suit/space/changeling
@@ -292,6 +292,7 @@
 	clothing_flags = STOPSPRESSUREDAMAGE //Not THICKMATERIAL because it's organic tissue, so if somebody tries to inject something into it, it still ends up in your blood. (also balance but muh fluff)
 	allowed = list(/obj/item/flashlight, /obj/item/tank/internals/emergency_oxygen, /obj/item/tank/internals/oxygen)
 	armor = list("melee" = 0, "bullet" = 0, "laser" = 0,"energy" = 0, "bomb" = 0, "bio" = 0, "rad" = 0, "fire" = 90, "acid" = 90) //No armor at all.
+	pocket_storage_component_path = FALSE
 
 /obj/item/clothing/suit/space/changeling/Initialize()
 	. = ..()
@@ -329,7 +330,7 @@
 	helptext = "Upkeep of the armor requires a low expenditure of chemicals. The armor is strong against brute force, but does not provide much protection from lasers. Cannot be used in lesser form."
 	button_icon_state = "chitinous_armor"
 	chemical_cost = 20
-	dna_cost = 1
+	dna_cost = 2
 	req_human = 1
 	recharge_slowdown = 0.25
 
@@ -346,6 +347,7 @@
 	body_parts_covered = CHEST|GROIN|LEGS|FEET|ARMS|HANDS
 	armor = list("melee" = 40, "bullet" = 40, "laser" = 40, "energy" = 50, "bomb" = 10, "bio" = 4, "rad" = 0, "fire" = 90, "acid" = 90)
 	flags_inv = HIDEJUMPSUIT
+	pocket_storage_component_path = FALSE
 	cold_protection = 0
 	heat_protection = 0
 

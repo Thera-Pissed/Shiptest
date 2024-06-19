@@ -373,11 +373,16 @@
 /datum/antagonist/changeling/greet()
 	if (you_are_greet)
 		to_chat(owner.current, "<span class='boldannounce'>You are [changelingID], a changeling! You have absorbed and taken the form of a human.</span>")
-	to_chat(owner.current, "<span class='boldannounce'>Use say \"[MODE_TOKEN_CHANGELING] message\" to communicate with your fellow changelings.</span>")
+	//to_chat(owner.current, "<span class='boldannounce'>Use say \"[MODE_TOKEN_CHANGELING] message\" to communicate with your fellow changelings.</span>")
 	to_chat(owner.current, "<b>You must complete the following tasks:</b>")
 	owner.current.playsound_local(get_turf(owner.current), 'sound/ambience/antag/ling_aler.ogg', 100, FALSE, pressure_affected = FALSE, use_reverb = FALSE)
 
 	owner.announce_objectives()
+
+/datum/antagonist/changeling/shiptest/greet()
+	//to_chat(owner.current, "<span class='boldannounce'>You are [changelingID], a changeling! You have absorbed and taken the form of a creature.</span>") //currently only aspawn, and aspawn announces this.
+	to_chat(owner.current, "<span class='boldannounce'>We will know our tasks shortly. If none are given, ahelp.</span>")
+	owner.current.playsound_local(get_turf(owner.current), 'sound/ambience/antag/ling_aler.ogg', 100, FALSE, pressure_affected = FALSE, use_reverb = FALSE)
 
 /datum/antagonist/changeling/farewell()
 	to_chat(owner.current, "<span class='userdanger'>You grow weak and lose your powers! You are no longer a changeling and are stuck in your current form!</span>")
@@ -550,6 +555,14 @@
 	chem_recharge_rate = 0.5
 	dna_max = 3
 
+/datum/antagonist/changeling/shiptest
+	name = "Shiptest Changeling"
+	give_objectives = FALSE
+	show_in_roundend = TRUE
+	chem_storage = 50
+	geneticpoints = 6
+	dna_max = 2
+
 /datum/antagonist/changeling/roundend_report()
 	var/list/parts = list()
 
@@ -585,3 +598,6 @@
 
 /datum/antagonist/changeling/xenobio/antag_listing_name()
 	return ..() + "(Xenobio)"
+
+/datum/antagonist/changeling/xenobio/antag_listing_name()
+	return ..() + "(Shiptest)"
