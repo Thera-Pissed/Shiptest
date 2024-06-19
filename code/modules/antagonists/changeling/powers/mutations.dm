@@ -5,7 +5,6 @@
 		Space Suit
 		Shield
 		Armor
-		Tentacles
 */
 
 

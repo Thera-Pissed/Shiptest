@@ -561,7 +561,7 @@
 	show_in_roundend = TRUE
 	chem_storage = 50
 	geneticpoints = 6
-	dna_max = 2
+	dna_max = 4
 
 /datum/antagonist/changeling/roundend_report()
 	var/list/parts = list()
