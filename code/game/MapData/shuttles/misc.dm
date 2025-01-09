@@ -11,7 +11,7 @@
 	base_icon = "portgen1"
 	circuit = /obj/item/circuitboard/machine/pacman/super/not_very
 	sheet_path = /obj/item/stack/sheet/mineral/uranium
-	power_gen = 2500
+	power_gen = 5000
 	time_per_sheet = 85
 
 /obj/item/circuitboard/machine/pacman/super/not_very
