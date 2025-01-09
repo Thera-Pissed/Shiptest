@@ -9,7 +9,7 @@
 	use_power = NO_POWER_USE
 
 	var/active = FALSE
-	var/power_gen = 5000
+	var/power_gen = 10000
 	var/power_output = 1
 	var/consumption = 0
 	var/base_icon = "portgen0"
@@ -117,10 +117,10 @@
 		if(istype(SP, /obj/item/stock_parts/matter_bin))
 			max_sheets = SP.rating * SP.rating * 50
 		else if(istype(SP, /obj/item/stock_parts/capacitor))
-			temp_rating += SP.rating
+			temp_rating += (SP.rating * 0.5) + 0.5
 		else
-			consumption_coeff += SP.rating
-	power_gen = round(initial(power_gen) * temp_rating * 2)
+			consumption_coeff += (SP.rating * 0.5) + 0.5
+	power_gen = round(initial(power_gen) * temp_rating)
 	consumption = consumption_coeff
 
 /obj/machinery/power/port_gen/pacman/examine(mob/user)
@@ -290,7 +290,7 @@
 	base_icon = "portgen1"
 	circuit = /obj/item/circuitboard/machine/pacman/super
 	sheet_path = /obj/item/stack/sheet/mineral/uranium
-	power_gen = 15000
+	power_gen = 30000
 
 /obj/machinery/power/port_gen/pacman/super/overheat()
 	. =..()
@@ -302,7 +302,7 @@
 	icon_state = "portgen2_0"
 	circuit = /obj/item/circuitboard/machine/pacman/mrs
 	sheet_path = /obj/item/stack/sheet/mineral/diamond
-	power_gen = 40000
+	power_gen = 80000
 
 /obj/machinery/power/port_gen/pacman/mrs/overheat()
 	. =..()
